@@ -7,7 +7,6 @@ import Tesseract from "tesseract.js";
 import path from "path";
 import poppler from "pdf-poppler";
 
-// Disable Next.js default bodyParser for Formidable
 export const config = { api: { bodyParser: false } };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -24,6 +23,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
       const filePath = file.filepath;
       const fileBuffer = await fs.readFile(filePath);
+
+      const originalFilename = path.parse(file.originalFilename || "document").name.replace(/\s+/g, "_");
+      console.log(`📂 Processing file: ${originalFilename}`);
 
       let extractedText = "";
       let scannedText = "";
@@ -52,33 +54,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const popplerOptions = {
           format: "png",
           out_dir: outputDir,
-          out_prefix: "pdf_page",
+          out_prefix: `${originalFilename}_page`,
           page: null,
         };
 
         await poppler.convert(filePath, popplerOptions);
 
         const imageFiles = (await fs.readdir(outputDir))
-          .filter(file => file.endsWith(".png"))
-          .sort(); // Ensure correct order
+          .filter(file => file.startsWith(originalFilename) && file.endsWith(".png"))
+          .sort(); 
 
         if (imageFiles.length === 0) {
           throw new Error("PDF-to-Image conversion failed. No images were generated.");
         }
         console.log("🖼️ PDF successfully converted to images:", imageFiles);
 
-        // ✅ Process all images for OCR
+        
         console.log("🔍 Running OCR on all extracted images...");
         for (const image of imageFiles) {
           const imagePath = path.join(outputDir, image);
           console.log(`🔹 Processing ${imagePath} with OCR...`);
           
           const ocrResult = await Tesseract.recognize(imagePath, "eng");
-          scannedText += `\n\n[OCR Page ${image}]:\n${ocrResult.data.text.trim()}`;
+          scannedText += `\n\n[OCR ${image}]:\n${ocrResult.data.text.trim()}`;
         }
         console.log("📝 Extracted Text (OCR):", scannedText ? "Text Found ✅" : "No OCR Text Found ❌");
 
-        // ✅ Cleanup: Delete all generated images
         for (const file of imageFiles) {
           await fs.unlink(path.join(outputDir, file));
         }
