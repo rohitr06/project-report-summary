@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-    const prompt = `Summarize this report focusing on: ${keywords}. Summary length: ${length}\n\n${text}`;
+    const prompt = `Summarize this report, including graphs. Focus on: ${keywords}. Summary length: ${length}\n\n${text}`;
     const response = await model.generateContent(prompt);
     console.log("🌟 API Response:", JSON.stringify(response, null, 2));
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setParameters } from "../../src/store/summarySlices";
-import { RootState } from "../../src/store";
+import { RootState } from "../../src/store/store";
 
 const ParameterForm = () => {
   const [params, setParams] = useState({ length: "Short", keywords: "" });

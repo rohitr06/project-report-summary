@@ -6,6 +6,8 @@ import { PDFDocument } from "pdf-lib";
 import Tesseract from "tesseract.js";
 import path from "path";
 import poppler from "pdf-poppler";
+import { processGraph } from "../../lib/graphProcessor";
+
 
 export const config = { api: { bodyParser: false } };
 
@@ -29,6 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       let extractedText = "";
       let scannedText = "";
+      let graphText = "";
 
       console.log("📄 Extracting text using pdf-parse...");
       const parsedPdf = await pdfParse(fileBuffer);
@@ -80,6 +83,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
         console.log("📝 Extracted Text (OCR):", scannedText ? "Text Found ✅" : "No OCR Text Found ❌");
 
+        //adding graph analysing 
+        for (const image of imageFiles) {
+          const imagePath = path.join(outputDir, image);
+
+          // 🔍 Check if this image is a graph
+          const graphResponse = await processGraph(imagePath);
+          if (graphResponse.graph_detected) {
+            graphText += `\n\n[Graph Detected]: ${graphResponse.graph_info}`;
+          }
+
+          
+        }
+
+
         for (const file of imageFiles) {
           await fs.unlink(path.join(outputDir, file));
         }
@@ -89,6 +106,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       let finalExtractedText = extractedText;
       if (scannedText) {
         finalExtractedText += `\n\n[Scanned Text Extracted]:\n${scannedText}`;
+      }
+      if (graphText) {
+        finalExtractedText += `\n\n[Graph Information]:\n${graphText}`;
       }
 
       if (!finalExtractedText.trim()) {

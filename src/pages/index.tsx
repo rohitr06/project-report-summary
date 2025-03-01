@@ -4,7 +4,7 @@ import FileUpload from "../../src/components/FileUpload";
 import ParameterForm from "../../src/components/parameterForm";
 import { RootState } from "../../src/store/store";
 import { setSummary } from "../../src/store/summarySlices";
-import { log } from "console";
+
 
 export default function Home() {
   const dispatch = useDispatch();

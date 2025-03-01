@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-    const prompt = `Extract 8 - 10 the most relevant keywords from the following text, separated by commas:\n\n${extractedText}`;
+    const prompt = `Extract 8 - 10 the most relevant keywords from the following text covering graphs/lines/bars/pie-charts, separated by commas:\n\n${extractedText}`;
 
     const response = await model.generateContent(prompt);
     const keywordText = response?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -33,7 +33,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(500).json({ error: "Failed to extract keywords" });
     }
 
-    // Convert comma-separated string to an array
     const keywords = keywordText.split(",").map((word) => word.trim());
 
     return res.status(200).json({ keywords });

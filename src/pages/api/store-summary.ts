@@ -11,22 +11,6 @@ const SummarySchema = new mongoose.Schema({
 
 const Summary = mongoose.models.Summary || mongoose.model('Summary', SummarySchema);
 
-// export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-//   if (req.method !== 'POST') return res.status(405).json({ error: 'Method Not Allowed' });
-
-//   await dbConnect(); // Ensures MongoDB is connected before storing data
-
-//   const { fileName, summary, keywords, length } = req.body;
-
-//   try {
-//     const newSummary = new Summary({ fileName, summary, keywords, length });
-//     await newSummary.save();
-//     res.status(201).json({ message: 'Summary stored successfully' });
-//   } catch (error) {
-//     console.error("❌ Error saving summary:", error);
-//     res.status(500).json({ error: 'Failed to store summary' });
-//   }
-// } 
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
