@@ -97,10 +97,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
 
-        for (const file of imageFiles) {
-          await fs.unlink(path.join(outputDir, file));
-        }
-        await fs.rmdir(outputDir);
+        // for (const file of imageFiles) {
+        //   await fs.unlink(path.join(outputDir, file));
+        // }
+        // await fs.rmdir(outputDir);
       }
 
       let finalExtractedText = extractedText;

@@ -10,7 +10,7 @@ import ReactMarkdown from "react-markdown";
 export default function SummaryPage() {
   const { summary, parameters } = useSelector((state: RootState) => state.summary);
   const dispatch = useDispatch();
-  const [feedbackSent, setFeedbackSent] = useState(false);
+  // const [feedbackSent, setFeedbackSent] = useState(false);
   useEffect(() => {
     if (!summary && parameters?.length) {
       dispatch(
