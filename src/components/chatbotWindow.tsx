@@ -24,8 +24,16 @@ export default function ChatbotWindow({ onClose }: ChatbotWindowProps) {
   };
 
   useEffect(() => {
+    const storedMessages = localStorage.getItem("chatMessages");
+    if (storedMessages) {
+      setMessages(JSON.parse(storedMessages));
+    }
+  }, []);
+  
+  
+  
+  useEffect(() => {
     
-
     const storedText = sessionStorage.getItem("extractedText") || '';
     //! console.log("🔍 Retrieved Extracted Text:", storedText); 
         
@@ -34,12 +42,40 @@ export default function ChatbotWindow({ onClose }: ChatbotWindowProps) {
     
   }, []);
 
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", () => {
+      localStorage.removeItem("chatMessages");
+      sessionStorage.removeItem("extractedText");
+    });
+  
+    // Load messages from local storage if available
+    const storedMessages = localStorage.getItem("chatMessages");
+    if (storedMessages) {
+      setMessages(JSON.parse(storedMessages));
+    }
+  
+    return () => {
+      window.removeEventListener("beforeunload", () => {
+        localStorage.removeItem("chatMessages");
+        sessionStorage.removeItem("extractedText");
+      });
+    };
+  }, []);
+
+  const updateStoredMessages = (newMessages: { sender: string; text: string }[]) => {
+    localStorage.setItem("chatMessages", JSON.stringify(newMessages));
+  };
+
   const sendMessage = async () => {
   //!   console.log("Sending Message - Extracted Text Length:", extractedText.length);
   //! console.log("Sending Message - Extracted Text Preview:", extractedText.slice(0, 200));
     if (!input.trim()) return;
     const userMessage = { sender: "user", text: input };
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
+    updateStoredMessages(newMessages);
+    //? setMessages((prevMessages) => [...prevMessages, userMessage]);
 
     try {
 
@@ -51,13 +87,23 @@ export default function ChatbotWindow({ onClose }: ChatbotWindowProps) {
          })
       });
       const data = await response.json();
-      setMessages(prevMessages => [...prevMessages, { sender: "bot", text: data.reply }]);
+      const botMessage = { sender: "bot", text: data.reply };
+      const updatedMessages = [...newMessages, botMessage];
+      setMessages(updatedMessages);
+      updateStoredMessages(updatedMessages);
+
+      //? setMessages(prevMessages => [...prevMessages, { sender: "bot", text: data.reply }]);
     } catch (error) {
-      console.error("Error sending message:", error);
-      setMessages(prevMessages => [...prevMessages, { 
-        sender: "bot", 
-        text: "Error fetching response." 
-      }]);    }
+      const errorMsg = { sender: "bot", text: "Error fetching response." };
+      const updatedMessages = [...newMessages, errorMsg];
+      setMessages(updatedMessages);
+      updateStoredMessages(updatedMessages);
+      //? console.error("Error sending message:", error);
+      //? setMessages(prevMessages => [...prevMessages, { 
+      //?   sender: "bot", 
+      //?   text: "Error fetching response." 
+      // }]);    
+      }
     setInput("");
   };
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -71,7 +117,18 @@ export default function ChatbotWindow({ onClose }: ChatbotWindowProps) {
       <div className="bg-blue-500 text-white p-3 flex justify-between items-center">
         
         <button onClick={onClose} className="text-white"><X size={20} /></button>
-      </div>
+      
+      
+      <button
+  className="bg-red-400 text-white px-3 py-1 rounded-lg "
+  onClick={() => {
+    setMessages([]);
+    localStorage.removeItem("chatMessages");
+  }}
+>
+  Clear
+</button>
+</div>
       <div className="p-3 h-64 overflow-y-auto">
         {messages.map((msg, idx) => (
           <div key={idx} className={`p-2 my-1 rounded-md ${msg.sender === "user" ? "bg-gray-200 text-right" : "bg-blue-100 text-left"}`}>

@@ -31,19 +31,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (!message ) {
+    message = "The question is not from the provided Document";
     return res.status(400).json({ error: "Message is required" });
   }
 
-  const prompt = `
-  You are an AI chatbot. Answer the user's question strictly based on the extracted text. 
-  If the question is not related to the extracted text, respond with: "The question is not from the provided document."
+  //! const prompt = `
+  //! You are an AI chatbot.  If the user's question relates to a general conversation that are not in extracted text, respond naturally. However, if the question is about specific information, answer strictly based on the extracted text provided. Do not generate information beyond the extracted content.
+  //! If the question is not related to the extracted text, respond with: "The question is not from the provided document."
+
+  //! Extracted Text:
+  //! ${extractedText || "No additional context provided."}
+
+  //! User's Question:
+  //! ${message}
+  //! `;
+
+   const prompt = `
+    You are an AI chatbot. Answer the user's question strictly based on the extracted text.
+   If the question is not related to the extracted text, respond with: "The question is not from the provided document."
 
   Extracted Text:
-  ${extractedText || "No additional context provided."}
+   ${extractedText || "No additional context provided."}
 
-  User's Question:
-  ${message}
-  `;
+   User's Question:
+   ${message}
+   `;
+
   try {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
     

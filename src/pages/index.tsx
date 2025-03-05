@@ -13,6 +13,7 @@ export default function Home() {
   const file = useSelector((state: RootState) => state.summary.fileName);
   const extractedText = useSelector((state: RootState) => state.summary.extractedText);
   const parameters = useSelector((state: RootState) => state.summary.parameters);
+  
 
   const handleGenerateSummary = async () => {
     console.log("📤 handleStoreSummary function triggered");
@@ -72,7 +73,7 @@ export default function Home() {
       </button>
       
     </div>
-    <ChatbotButton/>
+    {extractedText && <ChatbotButton />}
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store/store";
 import { setSummary } from "../../src/store/summarySlices";
 import ReactMarkdown from "react-markdown";
+import ChatbotButton from "@/components/chatbotButton";
 // import { Menu } from "@headlessui/react";
 // import { ChevronDownIcon, ClipboardIcon, MailIcon, DocumentTextIcon, ThumbUpIcon, ThumbDownIcon } from "@heroicons/react/outline";
 // import axios from "axios";
@@ -10,6 +11,7 @@ import ReactMarkdown from "react-markdown";
 export default function SummaryPage() {
   const { summary, parameters } = useSelector((state: RootState) => state.summary);
   const dispatch = useDispatch();
+  const extractedText = useSelector((state: RootState) => state.summary.extractedText); 
   // const [feedbackSent, setFeedbackSent] = useState(false);
   useEffect(() => {
     if (!summary && parameters?.length) {
@@ -19,7 +21,7 @@ export default function SummaryPage() {
     }
   }, [summary, parameters, dispatch]);
 
-  return (
+  return (<div>
     <div className="max-w-2xl mx-auto p-8 bg-white shadow-md rounded-md mt-20">
       <h1 className="text-2xl font-bold mb-4 text-center">Summary</h1>
       
@@ -34,5 +36,8 @@ export default function SummaryPage() {
         </div>
       )}
     </div>
+    <div>
+        {extractedText && <ChatbotButton />}
+        </div></div>
   );
 }
