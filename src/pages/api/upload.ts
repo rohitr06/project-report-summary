@@ -9,6 +9,7 @@ import poppler from "pdf-poppler";
 import { processGraph } from "../../lib/graphProcessor";
 
 
+
 export const config = { api: { bodyParser: false } };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -111,16 +112,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         finalExtractedText += `\n\n[Graph Information]:\n${graphText}`;
       }
 
+      //! console.log("Final Extracted Text Analysis:");
+      //! console.log(`- Total Length: ${finalExtractedText.length} characters`);
+      //! console.log(`- Preview (first 500 chars): ${finalExtractedText.slice(0, 500)}`);
+
       if (!finalExtractedText.trim()) {
         throw new Error("No text could be extracted from the document.");
+        
       }
 
       await fs.unlink(filePath);
 
       res.status(200).json({ message: "File uploaded successfully", text: finalExtractedText });
     } catch (error: any) {
-      console.error("❌ Error processing file:", error.message);
-      res.status(500).json({ error: "Failed to process file." });
+      console.error("❌ Error processing file:", {
+        message: error.message,
+        name: error.name,
+        stack: error.stack
+      });
+      res.status(500).json({ error: "Failed to process file.", details:error.message });
+
     }
   });
 }

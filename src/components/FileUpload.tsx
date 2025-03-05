@@ -8,6 +8,7 @@ const FileUpload = () => {
   const dispatch = useDispatch();
   const uploadedFile = useSelector((state: RootState) => state.summary.fileName);
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const onDrop = async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
@@ -23,6 +24,7 @@ const FileUpload = () => {
     formData.append("file", file);
 
     setLoading(true);
+    setSuccessMessage("");
     try {
       const response = await fetch("/api/upload", {
         method: "POST",
@@ -31,8 +33,11 @@ const FileUpload = () => {
 
       const data = await response.json();
       if (response.ok) {
-        dispatch(setExtractedText(data.text)); // Store extracted text in Redux
-      } else {
+        dispatch(setExtractedText(data.text)); // Store in Redux
+        sessionStorage.setItem("extractedText", data.text); // Store for chatbot
+        setSuccessMessage("Text extracted successfully! Ready for summarization.");      
+      }
+       else {
         alert("Upload failed: " + data.error);
       }
     } catch (error) {

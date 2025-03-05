@@ -4,6 +4,7 @@ import FileUpload from "../../src/components/FileUpload";
 import ParameterForm from "../../src/components/parameterForm";
 import { RootState } from "../../src/store/store";
 import { setSummary } from "../../src/store/summarySlices";
+import ChatbotButton from "@/components/chatbotButton";
 
 
 export default function Home() {
@@ -57,6 +58,7 @@ export default function Home() {
   };
 
   return (
+    <div>
     <div className="max-w-2xl mx-auto p-8 bg-gray-50 rounded-lg shadow-sm mt-20 hover:shadow-2xl">
       <h1 className="text-black text-xl font-bold mb-4">Upload Project Report</h1>
       <FileUpload />
@@ -68,6 +70,9 @@ export default function Home() {
       >
         Generate Summary
       </button>
+      
+    </div>
+    <ChatbotButton/>
     </div>
   );
 }
