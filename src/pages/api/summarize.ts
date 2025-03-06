@@ -1,16 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { GoogleGenerativeAI } from "@google/generative-ai";
+//* import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
 import dotenv from 'dotenv';
 import { log } from 'console';
 
 dotenv.config();
 
-const apiKey = process.env.GEMINI_API_KEY;
+const apiKey = process.env.OPENAI_API_KEY;
 if (!apiKey) {
-  console.error("❌ GEMINI_API_KEY is missing! Add it to .env.local");
+  console.error("❌ OPENAI_API_KEY is missing! Add it to .env.local");
 }
 
-const genAI = new GoogleGenerativeAI(apiKey!);
+const openAi = new OpenAI({ apiKey });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -24,20 +25,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-    let prompt="";
-    if(!prompt){
-      prompt = `Summarize this report, including graphs. Summary length: ${length}\n\n${text}`;
+    let prompt = `Summarize this report, including graphs. Summary length: ${length}.`;
+if (keywords) {
+  prompt += ` Focus on the following topics: ${keywords}.`;
+}
+prompt += `\n\n${text}`;
 
-    }
-    prompt=`Summarize about ${keywords}. Summary length: ${length}\n\n${text}`;
-    
-    
-    const response = await model.generateContent(prompt);
-    console.log("🌟 API Response:", JSON.stringify(response, null, 2));
 
-    const summaryText = response?.response?.candidates?.[0]?.content?.parts?.[0]?.text;
     
+    const response = await openAi.chat.completions.create({
+  model: "gpt-4",
+  messages: [{ role: "system", content: "You are an AI assistant that provides summaries strictly based on the given text." }, { role: "user", content: prompt }],
+});
+console.log("✅ Summary generated successfully.");
+    const summaryText = response.choices?.[0]?.message?.content?.trim();    
     if (!summaryText) {
       
       console.warn("⚠️ No valid summary generated.");

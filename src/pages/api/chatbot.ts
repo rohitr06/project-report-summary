@@ -1,15 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import OpenAI from "openai";
+
 import dotenv from "dotenv";
 
 dotenv.config();
 
-const apiKey = process.env.GEMINI_API_KEY;
+const apiKey = process.env.OPENAI_API_KEY;
+console.log(apiKey);
 if (!apiKey) {
-  console.error("❌ GEMINI_API_KEY is missing! Add it to .env.local");
+  console.error("❌ OPENAI_API_KEY is missing! Add it to .env.local");
 }
 
-const genAI = new GoogleGenerativeAI(apiKey!);
+const openAi = new OpenAI({ apiKey });
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   //! console.log("Chatbot API Request Body:", req.body);
@@ -31,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (!message ) {
-    message = "The question is not from the provided Document";
+    // message = "The question is not from the provided Document";
     return res.status(400).json({ error: "Message is required" });
   }
 
@@ -46,22 +48,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   //! ${message}
   //! `;
 
-   const prompt = `
-    You are an AI chatbot. Answer the user's question strictly based on the extracted text.
-   If the question is not related to the extracted text, respond with: "The question is not from the provided document."
+  //  const prompt = `
+  //   You are an AI chatbot. Answer the user's question strictly based on the extracted text.
+  //  If the question is not related to the extracted text, respond with: "The question is not from the provided document."
 
-  Extracted Text:
-   ${extractedText || "No additional context provided."}
+  // Extracted Text:
+  //  ${extractedText || "No additional context provided."}
 
-   User's Question:
-   ${message}
-   `;
+  //  User's Question:
+  //  ${message}
+  //  `;
 
   try {
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-    
-    const response = await model.generateContent(prompt);
-    const reply = response?.response?.candidates?.[0]?.content?.parts?.[0]?.text || "The question is not from the provided Document";
+    const response = await openAi.chat.completions.create({
+      model: "gpt-4", // Use GPT-4 or GPT-3.5-turbo
+      messages: [
+        { role: "system", content: "You are an AI chatbot. Answer the user's question strictly based on the extracted text.If the question is not related to the extracted text, respond with: The question is not from the provided document." },
+        { role: "user", content: `Extracted Text: ${extractedText}\n\nUser's Question: ${message}` }
+      ],
+      temperature: 0.7,
+      max_tokens: 300,
+    });
+    const reply = response.choices?.[0]?.message?.content?.trim() || "The question is not from the provided document."; // ✅ Added a fallback
     
 
     console.log("🤖 Chatbot Reply:", reply);

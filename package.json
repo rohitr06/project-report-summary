@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.22.0",
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
     "@reduxjs/toolkit": "^2.6.0",
@@ -26,7 +25,7 @@
     "multer": "^1.4.5-lts.1",
     "mupdf-js": "^2.0.1",
     "next": "^15.1.7",
-    "openai": "^4.85.4",
+    "openai": "^4.86.2",
     "pdf-lib": "^1.17.1",
     "pdf-parse": "^1.1.1",
     "pdf-poppler": "^0.2.1",
