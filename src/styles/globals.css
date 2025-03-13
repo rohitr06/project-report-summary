@@ -1,7 +1,353 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@500&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: auto;
 
-body{
-    @apply bg-gray-700;
+}
+
+
+body {
+  min-height: 100vh;
+  background: url("/background.jpg") no-repeat center center;
+  background-size: cover;
+  background-attachment: fixed;
+  position: relative;
+  overflow-y: auto;
+  margin-bottom: 50px;
+}
+
+
+
+
+/* body {
+ 
+  min-height: 100vh;
+  background-color: #131416; */
+  /* background: linear-gradient(to bottom right, #0a0a1a, #14142b, #000);
+
+  background-image:url("/background.jpg"); ;
+  background-attachment: fixed;
+  overflow: hidden; 
+  position: relative;
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* background: radial-gradient(circle at center, rgba(100, 86, 163, 0.2) 0%, rgba(10, 10, 26, 1) 63%); */
+  
+  /* background: radial-gradient(
+    circle at center, 
+    rgba(201, 65, 162, 0.15) 5.53%, 
+    rgba(97, 6, 231, 0.15) 60.62%, 
+    rgba(30, 0, 253, 0.15) 107.52%
+), 
+rgba(19, 20, 22, 1); */
+
+
+
+  /* z-index: -1;
+} */ 
+
+
+.chat-bot-win{
+  z-index: 1000;
+  bottom: 63px;
+  right: 35px;
+  
+}
+
+.loading-text{
+  font-family: Inter, sans-serif;
+
+}
+
+  .upload-the-report {
+    font-family: 'Poppins', sans-serif; 
+  
+  }
+
+
+
+  .drag-and-drop-frame{
+    /* width: 1317px;*/
+    height: 200px; 
+top: 117px;
+left: 100px;
+border-radius: 10px;
+border: 1px solid rgba(137, 137, 137, 0.6); 
+
+
+  }
+
+  .drag-and-drop-text{
+    font-family: 'Poppins', sans-serif; 
+    font-weight: 500; 
+    font-size: 24px; 
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #FFFFFF;
+   
+  }
+
+  .drag-and-drop-img{
+    width: 88;
+    height: 88;
+    
+
+  }
+
+  .choose-a-file{
+    
+        font-family: 'Sniglet', cursive; /* Use Sniglet font */
+        font-weight: 400; /* Regular font weight */
+        font-size: 16px; /* Font size */
+        line-height: 100%; /* Line height */
+        letter-spacing: 0%; /* Letter spacing */
+        text-align: center; /* Center-align text */
+        vertical-align: middle; /* Vertical alignment */
+        
+  }
+  .choose-a-file-anchor{
+    color: #0353ff;
+    text-decoration: underline; /* Underline text */
+        text-decoration-style: solid; /* Solid underline */
+        
+        text-decoration-thickness: 0%; /* Underline thickness */
+        text-decoration-skip-ink: auto; /* Skip ink on underline */
+      
+  }
+
+  .max-file{
+    font-family: 'Sniglet', cursive;
+font-weight: 400;
+font-size: 12px;
+line-height: 100%;
+letter-spacing: 0%;
+text-align: center;
+vertical-align: middle;
+color: #FFFFFF;
+  }
+
+
+  .uploaded-file-display{
+    margin-top: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(137, 137, 137, 0.6);
+  }
+
+  .uploaded-file-name{
+    font-family: 'Poppins', sans-serif; 
+    font-weight: 500; 
+    font-size: 14px; 
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #FFFFFF;
+  }
+
+.uploaded-file-processing{
+    font-family: 'Sniglet', cursive;
+font-weight: 400;
+font-size: 12px;
+line-height: 100%;
+letter-spacing: 0%;
+vertical-align: middle;
+
+}
+
+
+.progress-bar-bg{
+    background-color: #102145;
+}
+
+
+.summary-len-text{
+    font-family: 'Poppins', sans-serif; 
+font-weight: 500;
+font-size: 16px;
+line-height: 100%;
+letter-spacing: 0%;
+vertical-align: middle;
+color: #FFFFFF;
+
+}
+
+.summary-len-field{
+    font-family: 'Sniglet', cursive;
+
+    font-weight: lighter;
+    font-size: 14px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    vertical-align: middle;
+    
+    height: 40px;
+    gap: 4.6px;
+    border: 1px solid rgba(137, 137, 137, 0.6);
+    border-radius: 9.8px;
+    border-width: 0.98px;
+    padding-right: 15.68px;
+    padding-left: 15.68px;
+}
+
+.suggested-keyword{
+    
+height: 23;
+gap: 4px;
+padding: 5px 5px;
+border-radius: 10px;
+border-width: 0.5px;
+font-family: 'Sniglet', cursive;
+font-weight: 400;
+font-size: 13px;
+line-height: 100%;
+letter-spacing: 0%;
+text-align: center;
+vertical-align: middle;
+cursor: pointer;
+  
+background-color:#E2CCFF;
+
+}
+.suggested-keyword:hover{
+  background: linear-gradient(93.98deg, #911FC9 4.74%, #C941A2 96.38%);
+  transition: all 0.3s ease-in-out;
+ border:#6E00A4;
+}
+
+.selected-keyword{
+    background-color:#E2CCFF;
+    color:black;
+    height: auto;
+}   
+
+.sel-keyword-field{
+    font-family: 'Sniglet', cursive;
+
+    font-weight: lighter;
+    font-size: 14px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    vertical-align: middle;
+    
+    
+    gap: 4.6px;
+    border: 1px solid rgba(137, 137, 137, 0.6);
+    border-radius: 9.8px;
+    border-width: 0.98px;
+    padding-right: 15.68px;
+    padding-left: 15.68px;
+}
+
+
+.generate-summary-btn{
+    background: linear-gradient(93.98deg, #911FC9 4.74%, #C941A2 96.38%);
+    width:max-content;
+    
+    
+    height: max-content;
+
+border-radius: 20px;
+
+color: white;
+
+}
+
+.generate-summary-btn:hover{
+  background: #6E00A4;
+  
+
+}
+
+
+.chatbot{
+    background: #C941A2;
+
+}
+
+.cancel-btn{
+    width:max-content;
+    transition: all 0.3s ease-in-out;
+  transform: scale(1);
+    
+    border: 1px solid rgba(137, 137, 137, 0.6);
+
+    height: max-content;
+
+border-radius: 20px;
+
+color: white;
+
+
+}
+/* .cancel-btn:hover {
+  background: linear-gradient(93.98deg, #911FC9 4.74%, #C941A2 96.38%);
+  
+
+} */
+
+.chatbot-arrow{
+  font-size: 24px; /* Adjust size */
+  letter-spacing: -2px; 
+  line-height: 1; 
+    
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    cursor: pointer;
+}
+
+
+
+.chat-bot-header-text{
+  font-family: Inter, sans-serif;
+  font-weight: 600;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color: #131416;
+  margin-bottom: -3px;
+}
+
+.chat-bot-header-sub-text{
+  font-family: Inter, sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+ 
+  
+  color: #131416;
+  
+}
+
+.chatbot-bot-message{
+  font-family: Inter, sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color:#131416;
+  
+}
+
+.chatbot-bot-message-body{
+  font-family: Inter, sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 100%;
+  letter-spacing: 0%;
+  color:#131416;
+  
+}
+
+
+.chatbot-input{
+  margin-bottom: 10px;
+  height: 34px;
+  box-shadow: 0px 4px 4px 0px #00000040;
+
 }

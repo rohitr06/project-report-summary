@@ -9,6 +9,7 @@ import poppler from "pdf-poppler";
 import { processGraph } from "../../lib/graphProcessor";
 
 
+export const activeProcesses = new Map<string, AbortController>();
 
 export const config = { api: { bodyParser: false } };
 
@@ -23,12 +24,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const file = files.file?.[0];
     if (!file) return res.status(400).json({ error: "No file uploaded" });
 
+     
     try {
       const filePath = file.filepath;
       const fileBuffer = await fs.readFile(filePath);
 
       const originalFilename = path.parse(file.originalFilename || "document").name.replace(/\s+/g, "_");
       console.log(`📂 Processing file: ${originalFilename}`);
+     
 
       let extractedText = "";
       let scannedText = "";
@@ -135,3 +138,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
   });
 }
+

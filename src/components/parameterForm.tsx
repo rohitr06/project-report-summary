@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setParameters } from "../../src/store/summarySlices";
+import { setParameters, setExtractedText} from "../../src/store/summarySlices";
 import { RootState } from "../../src/store/store";
 
 const ParameterForm = () => {
@@ -77,17 +77,17 @@ const handleKeywordRemove = (keywordToRemove: string) => {
 
 
   return (
-    <div className="mt-4">
-      <div className="mb-6">
-        <label className="block">Summary Length:</label>
+    <div className="">
+      <div className="mb-6 flex flex-col gap-2">
+        <label className=" summary-len-text ">Summary Length:</label>
         <select
-          className="border p-2 w-full"
+          className="summary-len-field bg-transparent text-white"
           value={params.length}
           onChange={(e) => handleParameterChange({ ...params, length: e.target.value })}
         >
-          <option value="Short">Short</option>
-          <option value="Medium">Medium</option>
-          <option value="Long">Long</option>
+          <option value="Short" className="bg-black text-white">Short</option>
+          <option value="Medium" className="bg-black text-white">Medium</option>
+          <option value="Long"className="bg-black text-white">Long</option>
         </select>
       </div>
 
@@ -119,14 +119,17 @@ const handleKeywordRemove = (keywordToRemove: string) => {
       )}  */}
 
 
-<div className="mt-4">
-  <label className="block">Key Focus Area:</label>
-  <div className="border p-2 w-full flex flex-wrap gap-2 bg-white">
+<div className="">
+  <label className="block summary-len-text ">Key Focus Area: </label>
+  
+  <div className="sel-keyword-field bg-transparent text-white flex  max-h-auto pb-2 flex-wrap mt-2 gap-2 min-h-[40px]">
     {params.keywords.split(", ").filter((keyword) => keyword.trim() !== "").map((keyword, index) => (
+      
       <span
         key={index}
-        className="bg-blue-500 text-white px-3 py-1 rounded-lg text-sm flex items-center gap-2 transition-all duration-300 ease-in-out transform hover:scale-105"
-      >
+        className="selected-keyword h-7 px-3 py-1 rounded-lg text-sm max-w-max mt-2 flex items-center gap-2 transition-all duration-300 ease-in-out transform hover:scale-105"
+
+>
         {keyword}
         {params.keywords &&(
         <button
@@ -140,14 +143,14 @@ const handleKeywordRemove = (keywordToRemove: string) => {
   </div>
 </div>
 
-{displayedKeywords.length > 0 && (
+{extractedText&&displayedKeywords.length > 0 && (
         <div className="mt-2">
-          <p className="text-gray-600">Suggested Keywords:</p>
-          <div className="flex flex-wrap gap-2 mt-1">
+          <p className="summary-len-text mb-4">Suggestion Keyword:</p>
+          <div className="flex flex-wrap gap-2 space-around">
             {displayedKeywords.map((keyword, index) => (
               <span
                 key={index}
-                className="cursor-pointer bg-blue-200 text-blue-900 px-2 py-1 rounded-lg text-sm hover:bg-blue-300"
+                className="suggested-keyword "
                 onClick={() => handleKeywordClick(index)}
               >
                 {keyword}
