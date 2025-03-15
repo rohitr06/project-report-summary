@@ -29,7 +29,8 @@ const FileUpload = () => {
 
     setLoading(true);
     setSuccessMessage("");
-    setProgress(10);
+    setProgress(0);
+    
     try {
 
       const response = await fetch("/api/upload", {

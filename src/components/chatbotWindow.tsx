@@ -189,7 +189,7 @@ updateStoredMessages([...newMessages.slice(0, -1), errorMsg]);
   
 
 <div>
-  {msg.sender === "bot" && (msg.text === "Just a moment, gathering more details..." || msg.text === "Good question! Preparing right answer for you" || msg.text === "Here is your answer.") ? (
+  {msg.sender === "bot" && (msg.text === "Just a moment, gathering more details..." || msg.text === "Good question! Preparing right answer for you" ) ? (
                 <div className="flex flex-col  ml-24">
                 <Image src="/loading.gif" alt="Loading" width={40} height={40} className=" opacity-50 h-40 w-40" />
 
@@ -201,7 +201,7 @@ updateStoredMessages([...newMessages.slice(0, -1), errorMsg]);
 
      </div>         
 {/* BOT PROFILE IMAGE */}
-{msg.sender === "bot" && msg.text !== "“Just a moment, gathering more details..." && msg.text !== "Good question! Preparing right answer for you" && msg.text !== "Here is your answer." && (
+{msg.sender === "bot" && msg.text !== "“Just a moment, gathering more details..." && msg.text !== "Good question! Preparing right answer for you"  && (
   <Image 
     src="/chatBotLogo.png" 
     alt="Bot Avatar" 
@@ -213,7 +213,7 @@ updateStoredMessages([...newMessages.slice(0, -1), errorMsg]);
 
 
 {/* CHAT BUBBLE */}
-{msg.text !== "" && msg.text !== "“Just a moment, gathering more details..." && msg.text !== "Good question! Preparing right answer for you"  && msg.text !== "Here is your answer." ? (
+{msg.text !== "" && msg.text !== "“Just a moment, gathering more details..." && msg.text !== "Good question! Preparing right answer for you"   ? (
 
 <div className={`p-2 sm:p-3 max-w-[80%] text-xs sm:text-sm rounded-xl mb-2 ${msg.sender === "user" ? "bg-[#DAEBFF] text-right" : "bg-[#EBEAF9] text-left"}`}>
    {/* Check if it's the bot's first message and apply styles */}
