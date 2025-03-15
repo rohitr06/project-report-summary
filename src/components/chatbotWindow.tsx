@@ -80,8 +80,7 @@ export default function ChatbotWindow({ onClose }: ChatbotWindowProps) {
 
   const updateStoredMessages = (newMessages: { sender: string; text: string }[]) => {
     localStorage.setItem("chatMessages", JSON.stringify(newMessages));
-    setLoading(true);
-    setMessages((prev) => [...prev, { sender: "bot", text: "Good question! Preparing right answer for you" }]);
+    
   };
 
   const sendMessage = async () => {
@@ -94,9 +93,14 @@ export default function ChatbotWindow({ onClose }: ChatbotWindowProps) {
     updateStoredMessages(newMessages);
     //? setMessages((prevMessages) => [...prevMessages, userMessage]);
     setLoading(true);
+
+    const loadingMessage = { sender: "bot", text: "Good question! Preparing right answer for you" };
+    setMessages([...newMessages, loadingMessage]);
     
+
     setTimeout(async () => {
-      setMessages((prev) => [...prev.slice(0, -1), { sender: "bot", text: "Just a moment, gathering more details..." }]);
+      
+      // setMessages((prev) => [...prev.slice(0, -1), { sender: "bot", text: "Just a moment, gathering more details..." }]);
     try {
 
 
@@ -107,21 +111,25 @@ export default function ChatbotWindow({ onClose }: ChatbotWindowProps) {
           extractedText: extractedText 
          })
       });
-      setMessages((prev) => [...prev.slice(0, -1), { sender: "bot", text: "Here is your answer." }]);
       const data = await response.json();
       const botMessage = { sender: "bot", text: data.reply };
-      setMessages((prev) => [...prev.slice(0, -1), botMessage]);
+      const finalMessages = [...newMessages, botMessage];
+      setMessages(finalMessages);
       updateStoredMessages([...newMessages, botMessage]);
 
       //? setMessages(prevMessages => [...prevMessages, { sender: "bot", text: data.reply }]);
     } catch (error) {
       const errorMsg = { sender: "bot", text: "Error fetching response." };
-setMessages((prev) => [...prev.slice(0, -1), errorMsg]);
-updateStoredMessages([...newMessages.slice(0, -1), errorMsg]);
-      //? console.error("Error sending message:", error);
-      //? setMessages(prevMessages => [...prevMessages, { 
-      //?   sender: "bot", 
-      //?   text: "Error fetching response." 
+      const finalMessages = [...newMessages, errorMsg];
+        setMessages(finalMessages);
+        updateStoredMessages(finalMessages);
+
+// setMessages((prev) => [...prev.slice(0, -1), errorMsg]);
+// updateStoredMessages([...newMessages.slice(0, -1), errorMsg]);
+//       //? console.error("Error sending message:", error);
+//       //? setMessages(prevMessages => [...prevMessages, { 
+//       //?   sender: "bot", 
+//       //?   text: "Error fetching response." 
       // }]);    
       }
       setLoading(false);
@@ -156,15 +164,15 @@ updateStoredMessages([...newMessages.slice(0, -1), errorMsg]);
   
 
   return (
-    <div className=" fixed chat-bot-win  bg-white shadow-lg max-w-sm w-screen rounded-2xl overflow-hidden border border-gray-200">
-      <div className="bg-[#D5BAFD] text-white  flex justify-between items-center  w-full py-2 pr-2">
+    <div className=" fixed ml-5  chat-bot-win  bg-white shadow-lg max-w-sm md:max-w-md lg:max-w-lg rounded-2xl overflow-hidden border border-gray-200">
+      <div className="bg-[#D5BAFD] text-white  flex justify-between items-center  w-full py-2 px-2 sm:px-4">
         <div className="flex items-center ">
         {/* <button onClick={onClose} className="text-white"><X size={20} /></button> */}
-        <button onClick={onClose} className="text-black chatbot-arrow " >&lt;</button>
+        <button onClick={onClose} className="text-black chatbot-arrow p-1 " >&lt;</button>
         {/* <Image src="/backImage.png" alt="back" width={35} height={35} onClick={onClose}  className=" chatbot-arrow"/> */}
 
         <Image src="/chatBotLogo.png" alt="Chatbot" width={30} height={30}  className=" sm:w-12 sm:h-11 w-9 h-10"/>
-        <div className="flex flex-col ml-1">  
+        <div className="flex flex-col ml-2">  
         <h1 className="   chat-bot-header-text ">GlideBot</h1>
         <h1 className=" chat-bot-header-sub-text ">A bot based on AI</h1>
         </div>
@@ -181,20 +189,20 @@ updateStoredMessages([...newMessages.slice(0, -1), errorMsg]);
 </button>
 </div>
 
-      <div className="p-2 sm:p-3 h-72 sm:h-96 overflow-y-auto ">
+      <div className="p-2 sm:p-3 md:p-4 h-64 md:h-64 lg:h-72 overflow-y-auto ">
         {messages.map((msg, idx) => (
           
 
-<div key={idx} className={`flex items-start gap-1 ${msg.sender === "user" ? "justify-end" : ""}`}>  {/* Check if it's the user's first message and apply styles */}
+<div key={idx} className={`flex items-start gap-2 ${msg.sender === "user" ? "justify-end" : ""}`}>  {/* Check if it's the user's first message and apply styles */}
   
 
 <div>
   {msg.sender === "bot" && (msg.text === "Just a moment, gathering more details..." || msg.text === "Good question! Preparing right answer for you" ) ? (
-                <div className="flex flex-col  ml-24">
-                <Image src="/loading.gif" alt="Loading" width={40} height={40} className=" opacity-50 h-40 w-40" />
+                <div className="w-full flex flex-col items-center justify-center py-2 ml-8">
+                <Image src="/loading.gif" alt="Loading" width={40} height={40} className=" opacity-50 h-40 w-20 sm:h-24 sm:w-24 md:h-28 md:w-28" />
 
                 
-                <p className="text-xs font-medium opacity-50 loading-text ">{msg.text}</p>
+                <p className="text-xs sm:test-sm font-medium opacity-50 loading-text text-center ">{msg.text}</p>
               </div>
                 
               ) :   null}
@@ -207,7 +215,7 @@ updateStoredMessages([...newMessages.slice(0, -1), errorMsg]);
     alt="Bot Avatar" 
     width={32} 
     height={32} 
-    className="mt-1"
+    className="mt-1 w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0"
   />
 )}
 
@@ -215,7 +223,7 @@ updateStoredMessages([...newMessages.slice(0, -1), errorMsg]);
 {/* CHAT BUBBLE */}
 {msg.text !== "" && msg.text !== "“Just a moment, gathering more details..." && msg.text !== "Good question! Preparing right answer for you"   ? (
 
-<div className={`p-2 sm:p-3 max-w-[80%] text-xs sm:text-sm rounded-xl mb-2 ${msg.sender === "user" ? "bg-[#DAEBFF] text-right" : "bg-[#EBEAF9] text-left"}`}>
+<div className={`p-2 sm:p-3 max-w-[70%] sm:max-w-[75%] md:max-w-[80%] text-xs sm:text-sm rounded-xl mb-2 ${msg.sender === "user" ? "bg-[#DAEBFF] text-right" : "bg-[#EBEAF9] text-left"}`}>
    {/* Check if it's the bot's first message and apply styles */}
    {msg.sender === "bot" && idx === 0 ? (
           <span className="font-bold chatbot-bot-message">
@@ -228,30 +236,29 @@ updateStoredMessages([...newMessages.slice(0, -1), errorMsg]);
         
         {/* Replace \n with actual line breaks */}
         {msg.sender === "bot"  &&
-msg.text !== "Just a moment, gathering more details..." &&
-msg.text !== "Here is your answer." ? ( msg.text.split("\n").map((line, i) => (
+msg.text !== "Just a moment, gathering more details..." ? ( msg.text.split("\n").map((line, i) => (
           <React.Fragment key={i}>
-            <span className="chatbot-bot-message-body">{line}</span>
-            <br />
+            <span className="chatbot-bot-message-body break-words">{line}</span>
+            {i < msg.text.split("\n").length - 1 && <br />}
           </React.Fragment>
         ))): null}
   {/* {msg.text} */}
 
   {/* Disclaimer Message */}
-  {msg.sender === "bot" && msg.text !== "Just a moment, gathering more details..."  && msg.text !== "Good question! Preparing right answer for you"  && msg.text !== "Here is your answer." ?(
+  {msg.sender === "bot" && msg.text !== "Just a moment, gathering more details..."  && msg.text !== "Good question! Preparing right answer for you"   ?(
 <div className=" text-gray-500 text-xs flex items-center gap-1 px-1 pt-1">
-  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M12 4a8 8 0 100 16 8 8 0 000-16z" />
   </svg>
-  <span>These answers are based on AI and might be inaccurate.</span>
+  <span className="text-xs">These answers are based on AI and might be inaccurate.</span>
 </div>):  null}
         
 
 {msg.sender === "user" ?
 msg.text.split("\n").map((line, i) => (
   <React.Fragment key={i}>
-    <span className="chatbot-user-message">{line}</span>
-    <br />
+    <span className="chatbot-user-message break-words">{line}</span>
+    {i < msg.text.split("\n").length - 1 && <br />}
   </React.Fragment>
 )):null}
 
@@ -267,7 +274,7 @@ msg.text.split("\n").map((line, i) => (
     alt="User" 
     width={32} 
     height={32} 
-    className="mt-1"
+    className="mt-1 w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0"
   />
 )}
 
@@ -281,7 +288,7 @@ msg.text.split("\n").map((line, i) => (
       </div>
 
 {/* CHAT INPUT */}
-      <div className="sm:p-3 p-2  items-center gap-2 ">
+      <div className="sm:p-3 p-2 md:p-4 items-center gap-2 ">
         <div className="flex flex-row chatbot-input bg-[#eeeeee] sm:p-3 p-2 border rounded-2xl text-sm items-center justify-between w-full " >
         <input 
           type="text" 
@@ -292,7 +299,7 @@ msg.text.split("\n").map((line, i) => (
           placeholder="Start a chat" 
         />
 
-        <button className=" text-black  rounded-full text-xl sm:text-2xl font-semibold" onClick={sendMessage}>
+        <button className=" text-black  rounded-full text-xl sm:text-2xl font-semibold ml-2 flex-shrink-0" onClick={sendMessage}>
         ➤
           </button>
           </div>

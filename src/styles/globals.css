@@ -24,6 +24,8 @@ body {
 
 
 
+
+
 /* body {
  
   min-height: 100vh;
@@ -272,7 +274,7 @@ color: white;
 }
 
 .cancel-btn{
-    width:max-content;
+    width:120px;
     transition: all 0.3s ease-in-out;
   transform: scale(1);
     
@@ -349,5 +351,18 @@ color: white;
   margin-bottom: 10px;
   height: 34px;
   box-shadow: 0px 4px 4px 0px #00000040;
+
+}
+
+.sum-heading{
+  font-family: 'Poppins', sans-serif; 
+  color: #131416;
+
+  
+}
+
+.sum-text{
+  font-family: 'Sniglet', cursive;
+  font-weight: 400;
 
 }

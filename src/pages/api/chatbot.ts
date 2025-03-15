@@ -61,7 +61,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const response = await openAi.chat.completions.create({
-      model: "gpt-4", // Use GPT-4 or GPT-3.5-turbo
+      model: "gpt-4", 
       messages: [
         { role: "system", content: "You are an AI chatbot. Answer the user's question strictly based on the extracted text. Keep the answer straightforward and concise. If the question is not related to the extracted text, respond with: 'The question is not from the provided document.'" },
         { role: "user", content: `Extracted Text: ${extractedText}\n\nUser's Question: ${message}` }

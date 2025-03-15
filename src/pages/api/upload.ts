@@ -12,14 +12,33 @@ import { processGraph } from "../../lib/graphProcessor";
 export const activeProcesses = new Map<string, AbortController>();
 
 export const config = { api: { bodyParser: false } };
+let uploadProgress =0 ;
+let isUploading = false;
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== "POST") return res.status(405).json({ error: "Method Not Allowed" });
+  if (req.method === "GET") {
+    // Return upload progress for polling requests
+    return res.status(200).json({ progress: uploadProgress, status: isUploading ? "Uploading" : "Idle" });
+  }
+  if (req.method !== "POST"){
+    uploadProgress=0;
+     return res.status(405).json({ error: "Method Not Allowed" });
+  }
 
   const form = new IncomingForm({ keepExtensions: true });
 
+  form.on("progress", (bytesReceived, bytesExpected) => {
+    uploadProgress = Math.round((bytesReceived / bytesExpected) * 100);
+  });
+
+  isUploading = true;
+  uploadProgress = 0; // Reset progress
+
   form.parse(req, async (err, fields, files) => {
-    if (err) return res.status(500).json({ error: "File upload failed" });
+    if (err) {
+      isUploading = false;
+      return res.status(500).json({ error: "File upload failed" });
+    }
 
     const file = files.file?.[0];
     if (!file) return res.status(400).json({ error: "No file uploaded" });
@@ -123,11 +142,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         throw new Error("No text could be extracted from the document.");
         
       }
+const interval: NodeJS.Timeout | null = setInterval(() => {
+        if (uploadProgress < 90) uploadProgress += 10;
+        else clearInterval(interval!);
+      }, 1000);
+      uploadProgress = 100;
+      isUploading = false;
+      clearInterval(interval!);
 
       await fs.unlink(filePath);
 
-      res.status(200).json({ message: "File uploaded successfully", text: finalExtractedText });
-    } catch (error: any) {
+      res.status(200).json({
+        message: "File uploaded successfully",
+        text: finalExtractedText,
+        progress: uploadProgress,
+        status: "Completed",
+      });
+        } catch (error: any) {
+          isUploading = false;
+      uploadProgress = 0;
+
       console.error("❌ Error processing file:", {
         message: error.message,
         name: error.name,

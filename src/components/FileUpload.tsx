@@ -2,7 +2,7 @@ import { useDropzone } from "react-dropzone";
 import { useDispatch, useSelector } from "react-redux";
 import { setFile, setExtractedText } from "../../src/store/summarySlices";
 import { RootState } from "../../src/store/store";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from 'next/image';
 import { Trash2 } from "lucide-react";
 
@@ -14,6 +14,16 @@ const FileUpload = () => {
   const [successMessage, setSuccessMessage] = useState("");
   const [progress, setProgress] = useState(0);
 
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      const response = await fetch("/api/upload");
+      const data = await response.json();
+      setProgress(data.progress);
+    }, 200); // Poll every 0.2 seconds
+  
+    return () => clearInterval(interval);
+  }, []);
+
   const onDrop = async (acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
 
@@ -21,6 +31,8 @@ const FileUpload = () => {
       alert("Only PDF files are allowed.");
       return;
     }
+
+
 
     dispatch(setFile({ fileName: file.name, fileSize: file.size }));
 
@@ -32,6 +44,7 @@ const FileUpload = () => {
     setProgress(0);
     
     try {
+      setProgress(30);
 
       const response = await fetch("/api/upload", {
         method: "POST",
@@ -44,6 +57,7 @@ const FileUpload = () => {
         sessionStorage.setItem("extractedText", data.text); // Store for chatbot
         setSuccessMessage("Text extracted successfully! Ready for summarization.");      
         setProgress(100);
+        
       }
        else {
         alert("Upload failed: " + data.error);
@@ -70,9 +84,11 @@ const FileUpload = () => {
       if (!response.ok) {
         throw new Error(result.error);
       }
-      setExtractedText(""); // Clear extracted text
-          console.log("✅ File removed successfully:", uploadedFile);
-
+      dispatch(setFile({ fileName: "", fileSize: 0 })); // Clears uploaded file
+      dispatch(setExtractedText("")); // Clears extracted text in Redux
+      sessionStorage.removeItem("extractedText"); // Clear stored text for chatbot
+      setProgress(0); // Reset progress bar
+      console.log(" File removed successfully:", uploadedFile);
     } catch (error) {
       console.error("Error canceling upload:", error);
     }
@@ -130,7 +146,7 @@ const FileUpload = () => {
 
             <div className="flex flex-row items-center  gap-6">
           {/* Progress Bar */}
-          {loading && (
+          {loading && progress>0 && (
             <div className="w-10 h-1 progress-bar-bg rounded-full overflow-hidden">
                <div
       className={`h-full transition-all bg-gradient-to-r from-[#C941A2] to-[#911FC9]}`}
